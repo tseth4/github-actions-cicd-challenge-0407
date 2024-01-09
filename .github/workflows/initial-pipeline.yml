@@ -28,14 +28,14 @@ jobs:
       - run: echo "- Simulate and test the artifact"
 
   development:
-    needs: [test-artifact]
+    needs: [build]
     runs-on: ubuntu-latest
     environment: development
     steps:
       - run: echo "- Auto-deploy the artifact to the development environment"
         
   staging:
-    needs: [development]
+    needs: [test-artifact, build, development]
     runs-on: ubuntu-latest
     environment: staging
     steps:
@@ -51,7 +51,7 @@ jobs:
       - run: echo "- Test the staging environment"
         
   production:
-    needs: [test-staging]
+    needs: [test-staging, staging]
     runs-on: ubuntu-latest
     environment: production
 
@@ -63,6 +63,7 @@ jobs:
           echo "- Deploy the artifact to the production environment"
 
   test-production:
+    needs: [production]
     runs-on: ubuntu-latest
     steps:
       - run: echo "- Test the artifact in the production environment"
